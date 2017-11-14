@@ -1,0 +1,10 @@
+{
+  "name": "veriff-demo-js",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "crypto": "^0.0.3",
+    "node-fetch": "^1.7.2",
+    "uuid": "^3.0.1"
+  }
+}
