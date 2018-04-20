@@ -1,7 +1,7 @@
 # Readme
 
 ## Add secret and key
-On line 7 and 8, please add your secret and key.
+On line 7 and 8 of veriff_demo.js, please add your secret and key.
 ```
 var clientId = 'Add your key here';
 var secret = 'Add your secret here';
