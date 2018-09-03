@@ -2,6 +2,7 @@
 const fs = require('fs');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
+const bodyParser = require('body-parser');
 
 // Globals
 const API_TOKEN = process.env.API_TOKEN;
@@ -162,15 +163,38 @@ function generateSignature(payload, secret) {
   return signature.digest('hex');
 }
 
+function isSignatureValid(data) {
+  const { signature, secret } = data;
+  let { payload } = data;
+
+  if (data.payload.constructor === Object) {
+    payload = JSON.stringify(data.payload);
+  }
+  if (payload.constructor !== Buffer) {
+    payload = new Buffer(payload, 'utf8');
+  }
+  const hash = crypto.createHash('sha256');
+  hash.update(payload);
+  hash.update(new Buffer(secret));
+  const digest = hash.digest('hex');
+  return digest === signature.toLowerCase();
+}
+
 // Receive a web hook locally
 if (WEBHOOK_PORT) {
   const express = require('express');
   const app = express();
+  app.use(bodyParser.json());
   let server = require('http').Server(app);
 
   app.post('/verification/', (req, res) => {
+    const signature = req.get('x-signature');
+    const secret = API_SECRET;
+    const payload = req.body;
+
     console.log('Received a webhook');
-    console.log(req.body);
+    console.log('Validated signature:', isSignatureValid({ signature, secret, payload }));
+    console.log('Payload', JSON.stringify(payload, null, 4));
     res.json({ status: 'success' });
     process.exit();
   })
