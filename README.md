@@ -1,3 +1,10 @@
+---
+owner: "Client Tools"
+description: "Demo for integrating with Veriff's API directly"
+status: "production"
+type: "documentation"
+---
+
 ## Veriff's JS integration demo  
 # Intro:  
 This is a barebones example on how to integrate Veriff's API in a headless mode that skips our frontend application.  
