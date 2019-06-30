@@ -159,7 +159,7 @@ function generateSignature(payload, secret) {
 
   const signature = crypto.createHash('sha256');
   signature.update(payload);
-  signature.update(new Buffer(secret, 'utf8'));
+  signature.update(new Buffer.from(secret, 'utf8'));
   return signature.digest('hex');
 }
 
@@ -171,11 +171,11 @@ function isSignatureValid(data) {
     payload = JSON.stringify(data.payload);
   }
   if (payload.constructor !== Buffer) {
-    payload = new Buffer(payload, 'utf8');
+    payload = new Buffer.from(payload, 'utf8');
   }
   const hash = crypto.createHash('sha256');
   hash.update(payload);
-  hash.update(new Buffer(secret));
+  hash.update(new Buffer.from(secret));
   const digest = hash.digest('hex');
   return digest === signature.toLowerCase();
 }
