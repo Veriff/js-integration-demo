@@ -145,7 +145,7 @@ function timestamp() { return new Date().toISOString() };
 
 function readImage(file) {
   const bitmap = fs.readFileSync(file);
-  return Buffer(bitmap).toString('base64');
+  return Buffer.from(bitmap).toString('base64');
 }
 
 function generateSignature(payload, secret) {
