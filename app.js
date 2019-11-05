@@ -46,8 +46,8 @@ async function start() {
     const payload = {
       verification: {
         person: {
-          firstName: 'Tundmatu',
-          lastName: 'Toomas',
+          firstName: 'Rumu',
+          lastName: 'Liremi',
           idNumber: '38508260269'
         },
         document: {
