@@ -67,7 +67,7 @@ async function start() {
 
     const headers = {
       'x-auth-client': API_TOKEN,
-      'x-signature': generateSignature(payload, API_SECRET),
+      'x-hmac-signature': generateSignature(payload, API_SECRET),
       'content-type':'application/json'
     };
 
@@ -92,7 +92,7 @@ async function upload(verificationId, file) {
 
     const headers = {
       'x-auth-client': API_TOKEN,
-      'x-signature': generateSignature(payload, API_SECRET),
+      'x-hmac-signature': generateSignature(payload, API_SECRET),
       'content-type':'application/json'
     };
 
@@ -110,7 +110,7 @@ async function getMedia(verificationId) {
   try {
     const headers = {
       'x-auth-client': API_TOKEN,
-      'x-signature': generateSignature(verificationId, API_SECRET)
+      'x-hmac-signature': generateSignature(verificationId, API_SECRET)
     };
 
     const options = { method: 'GET', headers: headers };
@@ -128,7 +128,7 @@ async function end(verificationId) {
 
     const headers = {
       'x-auth-client': API_TOKEN,
-      'x-signature': generateSignature(payload, API_SECRET),
+      'x-hmac-signature': generateSignature(payload, API_SECRET),
       'content-type':'application/json'
     };
 
@@ -157,9 +157,8 @@ function generateSignature(payload, secret) {
     payload = Buffer.from(payload, 'utf8');
   }
 
-  const signature = crypto.createHash('sha256');
+  const signature = crypto.createHmac('sha256', secret);
   signature.update(payload);
-  signature.update(new Buffer.from(secret, 'utf8'));
   return signature.digest('hex');
 }
 
@@ -173,9 +172,8 @@ function isSignatureValid(data) {
   if (payload.constructor !== Buffer) {
     payload = new Buffer.from(payload, 'utf8');
   }
-  const hash = crypto.createHash('sha256');
+  const hash = crypto.createHmac('sha256', secret);
   hash.update(payload);
-  hash.update(new Buffer.from(secret));
   const digest = hash.digest('hex');
   return digest === signature.toLowerCase();
 }
@@ -188,7 +186,7 @@ if (WEBHOOK_PORT) {
   let server = require('http').Server(app);
 
   app.post('/verification/', (req, res) => {
-    const signature = req.get('x-signature');
+    const signature = req.get('x-hmac-signature');
     const secret = API_SECRET;
     const payload = req.body;
 
