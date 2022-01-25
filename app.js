@@ -46,18 +46,14 @@ async function start() {
     const payload = {
       verification: {
         person: {
-          firstName: 'Rumu',
-          lastName: 'Liremi',
-          idNumber: '38508260269'
+          firstName: 'Nican Onio',
+          lastName: 'Xander [EXAMPLE]',
+          idNumber: '001-1505561-1'
         },
         document: {
-          number: 'B01234567',
-          type: 'ID_CARD',
-          country: 'EE'
-        },
-        additionalData: {
-          citizenship: 'EE',
-          placeOfResidence: 'Tallinn'
+          number: 'VL0199336',
+          type: 'PASSPORT',
+          country: 'DO'
         },
         lang: 'en',
         features: ['selfid'],
