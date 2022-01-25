@@ -47,17 +47,13 @@ async function start() {
       verification: {
         person: {
           firstName: 'Nican Onio',
-          lastName: 'Xander',
+          lastName: 'Xander [EXAMPLE]',
           idNumber: '001-1505561-1'
         },
         document: {
           number: 'VL0199336',
           type: 'PASSPORT',
           country: 'DO'
-        },
-        additionalData: {
-          citizenship: 'DO',
-          placeOfResidence: 'Santo Domingo'
         },
         lang: 'en',
         features: ['selfid'],
