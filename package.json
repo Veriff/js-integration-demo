@@ -6,6 +6,6 @@
     "body-parser": "^1.18.3",
     "crypto": "^1.0.1",
     "express": "^4.16.3",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.7"
   }
 }
