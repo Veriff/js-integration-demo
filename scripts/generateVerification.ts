@@ -11,11 +11,7 @@ import {
   randomPassportNumber,
   randomPerson,
 } from "../src/random";
-import type {
-  ImageSource,
-  GenerateOptions,
-  DocumentType,
-} from "../src/types";
+import type { ImageSource, GenerateOptions, DocumentType } from "../src/types";
 
 function buildDefaultPayload(documentType: DocumentType): SessionPayload {
   const person = randomPerson();
@@ -140,7 +136,9 @@ export async function generateVerification(
   const session = await coreApi.createSession(payload);
   const verificationId = session.verification.id;
   const { firstName, lastName } = payload.verification.person;
-  logger.info(`Started verification: ${verificationId} | Name: ${firstName} ${lastName}`);
+  logger.info(
+    `Started verification: ${verificationId} | Name: ${firstName} ${lastName}`,
+  );
 
   const selectedCase = USE_CASE ? SESSIONS[USE_CASE] : null;
   const shouldSkipSelfie = selectedCase?.skipSelfie;
