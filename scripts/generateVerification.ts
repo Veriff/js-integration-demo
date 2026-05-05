@@ -74,10 +74,10 @@ function buildDefaultPayload(documentType: DocumentType): SessionPayload {
 async function uploadImages(
   verificationId: string,
   imageSources: ImageSource[],
-  shouldSkipSelfie?: boolean,
+  shouldSkipImages?: boolean,
 ): Promise<void> {
-  if (shouldSkipSelfie) {
-    logger.warn("Skipping selfie upload (test case requires it)");
+  if (shouldSkipImages) {
+    logger.warn("Skipping image uploads (test case requires it)");
     return;
   }
 
@@ -145,8 +145,8 @@ export async function generateVerification(
   );
 
   const selectedCase = USE_CASE ? SESSIONS[USE_CASE] : null;
-  const shouldSkipSelfie = selectedCase?.skipSelfie;
-  await uploadImages(verificationId, imageSources, shouldSkipSelfie);
+  const shouldSkipImages = selectedCase?.skipImages;
+  await uploadImages(verificationId, imageSources, shouldSkipImages);
 
   await coreApi.endSession(verificationId);
   logger.info("Ended verification");

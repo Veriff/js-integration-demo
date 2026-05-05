@@ -10,7 +10,7 @@ export interface SessionPayload {
 export interface TestCase {
   name: string;
   payload: SessionPayload;
-  skipSelfie?: boolean;
+  skipImages?: boolean;
 }
 
 export type SessionMap = Record<string, TestCase>;
