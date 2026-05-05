@@ -62,7 +62,7 @@ npm run server
 | `API_TOKEN`    | Yes              | —                  | Veriff API key (`x-auth-client` header)             |
 | `API_SECRET`   | Yes              | —                  | HMAC-SHA256 signing key                             |
 | `API_URL`      | No               | Veriff station API | Veriff API base URL                                 |
-| `USE_CASE`     | No               | —                  | Test case ID from `data/sessions/` (e.g. `BR-TC01`) |
+| `USE_CASE`     | No               | —                  | Test case ID from `data/<COUNTRY>/` (e.g. `BR-TC01`) |
 | `WEBHOOK_PORT` | Yes (for server) | —                  | Port for the webhook listener                       |
 
 ## Webhook
@@ -71,6 +71,8 @@ To receive decision notifications, update **Web hook url** (Management -> Vendor
 
 ## Test Cases
 
-Available test cases live in `data/sessions/`. Each country has a registry file (e.g. `BR_registries.ts`, `AR_registries.ts`). Use `npm run cli` and select "Generate a verification from registries" to pick a test case.
+Available test cases live in `data/<COUNTRY>/`. Each country folder has a `registries.ts` file plus `names.ts` (localized names), `documents/` (document images), and optionally `biometric/` (face images). Supported countries: AR, BR, EE, MX, US.
+
+Use `npm run cli` and select "Generate a verification from registries" to pick a test case.
 
 To add new test cases, see [CLAUDE.md](CLAUDE.md#adding-new-test-cases).

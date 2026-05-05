@@ -153,10 +153,13 @@ export async function generateVerification(
   }
 
   const session = await coreApi.createSession(payload);
+
   const verificationId = session.verification.id;
-  const { firstName, lastName } = payload.verification.person;
+  logger.info(`Started verification: ${verificationId}`);
+
+  const { person, document } = payload.verification;
   logger.info(
-    `Started verification: ${verificationId} | Name: ${firstName} ${lastName}`,
+    `Details sent: ${person.firstName} ${person.lastName} | ${document.type} ${document.number} | ${document.country}`,
   );
 
   const selectedCase = USE_CASE ? SESSIONS[USE_CASE] : null;
