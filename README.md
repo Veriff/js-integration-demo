@@ -5,22 +5,72 @@ status: "production"
 type: "documentation"
 ---
 
-## Veriff's JS integration demo  
-# Intro:  
-This is a barebones example on how to integrate Veriff's API in a headless mode that skips our frontend application.  
-It currently does five things for you:
-1. Starts a verification session with Veriff.  
-2. Uploads three images and attaches those to the verification session.  
+# Veriff's TypeScript Integration Demo
+
+Headless Veriff API integration that skips Veriff's frontend application. Two entry points:
+
+- **CLI** (`npm run cli`) — Interactive menu to generate verification sessions (from scratch or from pre-defined test case registries).
+- **Webhook server** (`npm run server`) — Express server that listens for Veriff decision notification webhooks and validates HMAC-SHA256 signatures.
+
+### Verification flow (CLI)
+
+1. Starts a verification session with Veriff.
+2. Uploads document and biometric images to the session.
 3. Ends the verification session.
-4. Does a media query for the verification session and receives the media that was uploaded during the second step.
-5. Optionally, it also receives a decision notification webhook from Veriff of the final decision, which usually shouldn't take longer than few minutes.
+4. Queries media for the session and retrieves what was uploaded.
 
-# Installation:  
-`npm install`  
+### Webhook flow (server)
 
-# Run:  
-Get 'Api key' and 'Api secret' (under Management -> Vendor) and respectively fill in API_TOKEN and API_SECRET environment variables.  
+1. Listens on `WEBHOOK_PORT` for POST requests to `/verification/`.
+2. Validates `x-hmac-signature` header against the request body.
+3. Logs the webhook payload and signature validation result.
 
-`API_TOKEN={_API_TOKEN} API_SECRET={API_SECRET} node app.js`  
+## Prerequisites
 
-Optionally, for receiving decision notifications for testing purposes, update 'Web hook url' (under Management -> Vendor -> Edit), and then include a WEBHOOK_PORT={PORT} argument that will boot up an Express.js webserver, and opens an endpoint that starts listening to the decision notification webhook for you (assuming your service has a public IP and domain and is open to the internet).  
+- Node.js v24.15.0 (see `.nvmrc`)
+
+## Installation
+
+```bash
+npm install
+```
+
+## Setup
+
+Copy `.env.example` to `.env` and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+Get **API key** and **API secret** from Management -> Vendor and set `API_TOKEN` and `API_SECRET` in `.env`.
+
+## Run
+
+```bash
+# Interactive CLI — generate verifications
+npm run cli
+
+# Webhook server — listen for decision notifications
+npm run server
+```
+
+## Environment Variables
+
+| Variable       | Required         | Default            | Purpose                                             |
+| -------------- | ---------------- | ------------------ | --------------------------------------------------- |
+| `API_TOKEN`    | Yes              | —                  | Veriff API key (`x-auth-client` header)             |
+| `API_SECRET`   | Yes              | —                  | HMAC-SHA256 signing key                             |
+| `API_URL`      | No               | Veriff station API | Veriff API base URL                                 |
+| `USE_CASE`     | No               | —                  | Test case ID from `data/sessions/` (e.g. `BR-TC01`) |
+| `WEBHOOK_PORT` | Yes (for server) | —                  | Port for the webhook listener                       |
+
+## Webhook
+
+To receive decision notifications, update **Web hook url** (Management -> Vendor -> Edit) to point to your publicly reachable host and set `WEBHOOK_PORT` in `.env`. Run `npm run server` to start the listener.
+
+## Test Cases
+
+Available test cases live in `data/sessions/`. Each country has a registry file (e.g. `BR_registries.ts`, `AR_registries.ts`). Use `npm run cli` and select "Generate a verification from registries" to pick a test case.
+
+To add new test cases, see [CLAUDE.md](CLAUDE.md#adding-new-test-cases).
