@@ -22,9 +22,18 @@ function isSignatureValid(data: {
     typeof data.payload === "object"
       ? JSON.stringify(data.payload)
       : String(data.payload);
+
   const hmac = crypto.createHmac("sha256", data.secret);
   hmac.update(Buffer.from(jsonPayload, "utf8"));
-  return hmac.digest("hex") === data.signature.toLowerCase();
+
+  const expected = hmac.digest();
+  const received = Buffer.from(data.signature.toLowerCase(), "hex");
+
+  if (expected.length !== received.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expected, received);
 }
 
 const app = express();
@@ -43,6 +52,7 @@ app.post("/verification/", (req, res) => {
   logger.info("Received webhook");
   logger.info(`Signature valid: ${valid}`);
   logger.info({ payload }, "Webhook payload");
+
   res.json({ status: "success" });
 });
 
