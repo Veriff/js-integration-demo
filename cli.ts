@@ -1,14 +1,17 @@
 import prompts from "prompts";
+
 import { AR_REGISTRIES } from "./data/AR/registries";
 import { BR_REGISTRIES } from "./data/BR/registries";
 import { MX_REGISTRIES } from "./data/MX/registries";
-import type { SessionMap } from "./data/types";
-import { generateVerification } from "./scripts/generateVerification";
 import {
   BIOMETRIC_EE,
   DOCUMENT_IMAGE_SOURCES,
   DOCUMENT_TYPES,
 } from "./src/constants";
+
+import { generateVerification } from "./scripts/generateVerification";
+import { randomFacePrefix } from "./src/random";
+import type { SessionMap } from "./data/types";
 
 const COUNTRY_REGISTRIES: Record<string, SessionMap> = {
   AR: AR_REGISTRIES,
@@ -93,7 +96,7 @@ async function generateFromRegistries(): Promise<"back" | void> {
   }
 
   const gender = registry[useCase].payload.verification.person.gender;
-  const facePrefix = gender === "M" ? "male_" : "female_";
+  const facePrefix = randomFacePrefix(gender);
 
   console.log("\nStarting verification...\n");
 

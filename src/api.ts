@@ -1,8 +1,10 @@
 import crypto from "node:crypto";
 import axios, { AxiosInstance } from "axios";
-import { SessionPayload } from "../data/index";
+
 import { timestamp } from "./dates";
 import { logger } from "./logger";
+
+import { SessionPayload } from "../data/index";
 
 interface StartResponse {
   verification: {
