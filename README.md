@@ -5,89 +5,72 @@ status: "production"
 type: "documentation"
 ---
 
-# Veriff JS integration demo
+# Veriff's TypeScript Integration Demo
 
-A minimal Node.js example of integrating with Veriff's API in headless mode, skipping Veriff's frontend application.
+Headless Veriff API integration that skips Veriff's frontend application. Two entry points:
 
-## What it does
+- **CLI** (`npm run cli`) — Interactive menu to generate verification sessions (from scratch or from pre-defined test case registries).
+- **Webhook server** (`npm run server`) — Express server that listens for Veriff decision notification webhooks and validates HMAC-SHA256 signatures.
 
-1. Starts a verification session (`POST /sessions`).
-2. Uploads every `.jpg`, `.jpeg` and `.png` image in `documents/` to the session (`POST /sessions/{id}/media`).
-3. Submits the session (`PATCH /sessions/{id}`).
-4. Fetches the session's media (`GET /sessions/{id}/media`) and prints it.
-5. Optionally, starts a local Express server that receives the decision webhook and validates its signature.
+### Verification flow (CLI)
 
-Every request is signed with an HMAC-SHA256 signature (`x-hmac-signature`) generated from the payload and your API secret.
+1. Starts a verification session with Veriff.
+2. Uploads document and biometric images to the session.
+3. Ends the verification session.
+4. Queries media for the session and retrieves what was uploaded.
 
-## Requirements
+### Webhook flow (server)
 
-- Node.js 24 (see `.nvmrc`)
-- npm
-- A Veriff API key and API secret (Veriff Customer Portal → Management → Vendor)
+1. Listens on `WEBHOOK_PORT` for POST requests to `/verification/`.
+2. Validates `x-hmac-signature` header against the request body.
+3. Logs the webhook payload and signature validation result.
+
+## Prerequisites
+
+- Node.js v24.15.0 (see `.nvmrc`)
 
 ## Installation
 
-```sh
+```bash
 npm install
 ```
 
-## Configuration
+## Setup
 
-| Variable       | Required | Default                    | Description                                              |
-| -------------- | -------- | -------------------------- | -------------------------------------------------------- |
-| `API_TOKEN`    | Yes      | —                          | Veriff API key, sent as `x-auth-client`                  |
-| `API_SECRET`   | Yes      | —                          | Veriff API secret, used to sign and validate requests    |
-| `API_URL`      | No       | `https://api.veriff.me/v1` | Base URL of the Veriff API                               |
-| `IMAGE_DIR`    | No       | `documents`                | Directory with the images to upload                      |
-| `WEBHOOK_PORT` | No       | —                          | When set, starts the webhook server on this port         |
+Copy `.env.example` to `.env` and fill in your credentials:
 
-Variables can be passed inline or through a `.env` file:
-
-```sh
-API_TOKEN=your-api-key
-API_SECRET=your-api-secret
+```bash
+cp .env.example .env
 ```
 
-## Usage
+Get **API key** and **API secret** from Management -> Vendor and set `API_TOKEN` and `API_SECRET` in `.env`.
 
-Inline variables:
+## Run
 
-```sh
-API_TOKEN=your-api-key API_SECRET=your-api-secret node app.js
+```bash
+# Interactive CLI — generate verifications
+npm run cli
+
+# Webhook server — listen for decision notifications
+npm run server
 ```
 
-With a `.env` file:
+## Environment Variables
 
-```sh
-node --env-file=.env app.js
-```
+| Variable       | Required         | Default            | Purpose                                             |
+| -------------- | ---------------- | ------------------ | --------------------------------------------------- |
+| `API_TOKEN`    | Yes              | —                  | Veriff API key (`x-auth-client` header)             |
+| `API_SECRET`   | Yes              | —                  | HMAC-SHA256 signing key                             |
+| `API_URL`      | No               | Veriff station API | Veriff API base URL                                 |
+| `USE_CASE`     | No               | —                  | Test case ID from `data/sessions/` (e.g. `BR-TC01`) |
+| `WEBHOOK_PORT` | Yes (for server) | —                  | Port for the webhook listener                       |
 
-### Images
+## Webhook
 
-Each image's file name (without extension) is sent as the media `context`, so files must be named after a valid Veriff context. The included samples are:
+To receive decision notifications, update **Web hook url** (Management -> Vendor -> Edit) to point to your publicly reachable host and set `WEBHOOK_PORT` in `.env`. Run `npm run server` to start the listener.
 
-- `documents/document-front.jpeg` → `document-front`
-- `documents/face.jpeg` → `face`
+## Test Cases
 
-Add or replace files in `IMAGE_DIR` to upload different media.
+Available test cases live in `data/sessions/`. Each country has a registry file (e.g. `BR_registries.ts`, `AR_registries.ts`). Use `npm run cli` and select "Generate a verification from registries" to pick a test case.
 
-### Receiving the decision webhook
-
-1. In the Veriff Customer Portal, set the webhook URL (Management → Vendor → Edit) to a publicly reachable URL that forwards to `http://<host>:<WEBHOOK_PORT>/verification/`.
-2. Run the demo with `WEBHOOK_PORT` set:
-
-   ```sh
-   WEBHOOK_PORT=3000 node --env-file=.env app.js
-   ```
-
-The server logs the payload and whether the signature is valid, then exits. The decision usually arrives within a few minutes.
-
-## Project structure
-
-```
-.
-├── app.js          # Session flow, HMAC signing and webhook server
-├── documents/      # Sample images uploaded to the session
-├── .nvmrc          # Node.js version
-└── package.json
-```
+To add new test cases, see [CLAUDE.md](CLAUDE.md#adding-new-test-cases).
