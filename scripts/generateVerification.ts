@@ -2,8 +2,9 @@ import { coreApi } from "../src/api";
 import { logger } from "../src/logger";
 import { timestamp } from "../src/dates";
 import { readImageBase64, readImages } from "../src/images";
-import { SESSIONS, SessionPayload } from "../data/index";
 
+import { BIOMETRIC_EE } from "../src/constants";
+import { SESSIONS, SessionPayload } from "../data/index";
 import {
   randomDriversLicenseDates,
   randomDriversLicenseNumber,
@@ -11,7 +12,7 @@ import {
   randomPassportNumber,
   randomPerson,
 } from "../src/random";
-import { BIOMETRIC_EE } from "../src/constants";
+
 import type {
   CountryCode,
   ImageSource,
@@ -98,6 +99,9 @@ async function uploadImages(
 
     const file = files[Math.floor(Math.random() * files.length)];
     if (!file) {
+      logger.warn(
+        `No matching image found in ${source.dir} (prefix: ${source.filePrefix ?? "none"}, context: ${source.context})`,
+      );
       continue;
     }
 
