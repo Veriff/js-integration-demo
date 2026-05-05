@@ -50,9 +50,14 @@ app.post("/verification/", (req, res) => {
   });
 
   logger.info("Received webhook");
-  logger.info(`Signature valid: ${valid}`);
-  logger.info({ payload }, "Webhook payload");
 
+  if (!valid) {
+    logger.warn("Invalid webhook signature");
+    res.status(401).json({ error: "invalid signature" });
+    return;
+  }
+
+  logger.info({ payload }, "Webhook payload");
   res.json({ status: "success" });
 });
 
