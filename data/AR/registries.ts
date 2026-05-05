@@ -320,7 +320,7 @@ export const AR_REGISTRIES: SessionMap = {
   },
   "AR-TC15": {
     name: "Missing selfie (skip media upload)",
-    skipSelfie: true,
+    skipImages: true,
     payload: {
       verification: {
         person: {

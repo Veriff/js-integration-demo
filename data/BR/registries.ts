@@ -320,7 +320,7 @@ export const BR_REGISTRIES: SessionMap = {
   },
   "BR-TC15": {
     name: "Missing selfie (skip media upload)",
-    skipSelfie: true,
+    skipImages: true,
     payload: {
       verification: {
         person: {
