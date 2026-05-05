@@ -1,11 +1,13 @@
 import { DateTime } from "luxon";
-import type { CountryCode, Person } from "./types";
+
+import { DATE_FORMAT } from "./dates";
 import * as AR_NAMES from "../data/AR/names";
 import * as BR_NAMES from "../data/BR/names";
 import * as EE_NAMES from "../data/EE/names";
 import * as MX_NAMES from "../data/MX/names";
 import * as US_NAMES from "../data/US/names";
-import { DATE_FORMAT } from "./dates";
+
+import type { CountryCode, Person } from "./types";
 
 const NAME_POOLS: Record<
   CountryCode,
@@ -42,9 +44,18 @@ export function randomDriversLicenseNumber(): string {
   return String(Math.floor(Math.random() * 90000000000) + 10000000000);
 }
 
+export function randomGender(): "M" | "F" {
+  return Math.random() < 0.5 ? "M" : "F";
+}
+
+export function randomFacePrefix(gender?: string): string {
+  const g = gender ?? randomGender();
+  return g === "M" ? "male_" : "female_";
+}
+
 export function randomPerson(country: CountryCode = "BR"): Person {
   const names = NAME_POOLS[country];
-  const gender = Math.random() < 0.5 ? "M" : "F";
+  const gender = randomGender();
 
   const firstName =
     gender === "M"
