@@ -1,3 +1,44 @@
-node_modules
-.vscode
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code
+.claude/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime / Build
+dist/
+build/
+tmp/
+*.tmp
+
+# Coverage / Testing
+coverage/
+.nyc_output/
+
+# Sessions / Local
+prompt.md
+prompt/
+docs/
+
+# Misc
+*.pid
+*.seed
+*.tgz
