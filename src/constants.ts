@@ -1,6 +1,7 @@
 import type { DocumentType, ImageSource } from "./types";
 
-export const DOCUMENTS_EE = "./data/EE/biometric";
+export const BIOMETRIC_EE = "./data/EE/biometric";
+export const DOCUMENTS_EE = "./data/EE/documents";
 export const DOCUMENTS_US = "./data/US/documents";
 
 export const DOCUMENT_TYPES: { title: string; value: DocumentType }[] = [

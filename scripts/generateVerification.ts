@@ -11,6 +11,7 @@ import {
   randomPassportNumber,
   randomPerson,
 } from "../src/random";
+import { BIOMETRIC_EE } from "../src/constants";
 import type { ImageSource, GenerateOptions, DocumentType } from "../src/types";
 
 function buildDefaultPayload(documentType: DocumentType): SessionPayload {
@@ -109,7 +110,10 @@ export async function generateVerification(
 ): Promise<void> {
   const USE_CASE = options?.useCase ?? process.env.USE_CASE;
   const imageSources: ImageSource[] = options?.imageSources ?? [
-    { dir: "./data/EE/biometric", context: "face" },
+    {
+      dir: BIOMETRIC_EE,
+      context: "face",
+    },
   ];
 
   if (USE_CASE && !SESSIONS[USE_CASE]) {
