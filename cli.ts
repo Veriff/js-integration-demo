@@ -4,7 +4,11 @@ import { BR_REGISTRIES } from "./data/BR/registries";
 import { MX_REGISTRIES } from "./data/MX/registries";
 import type { SessionMap } from "./data/types";
 import { generateVerification } from "./scripts/generateVerification";
-import { DOCUMENT_IMAGE_SOURCES, DOCUMENT_TYPES } from "./src/constants";
+import {
+  BIOMETRIC_EE,
+  DOCUMENT_IMAGE_SOURCES,
+  DOCUMENT_TYPES,
+} from "./src/constants";
 
 const COUNTRY_REGISTRIES: Record<string, SessionMap> = {
   AR: AR_REGISTRIES,
@@ -36,10 +40,7 @@ async function generateFromScratch(): Promise<"back" | void> {
   }
 
   const docSources = DOCUMENT_IMAGE_SOURCES[documentType] ?? [];
-  const imageSources = [
-    { dir: "./data/EE/biometric", context: "face" },
-    ...docSources,
-  ];
+  const imageSources = [{ dir: BIOMETRIC_EE, context: "face" }, ...docSources];
 
   console.log("\nStarting verification...\n");
 
@@ -99,7 +100,7 @@ async function generateFromRegistries(): Promise<"back" | void> {
   await generateVerification({
     useCase,
     imageSources: [
-      { dir: "./data/EE/biometric", context: "face", filePrefix: facePrefix },
+      { dir: BIOMETRIC_EE, context: "face", filePrefix: facePrefix },
     ],
   });
 }
