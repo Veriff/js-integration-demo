@@ -1,11 +1,26 @@
 import { DateTime } from "luxon";
-import type { Person } from "./types";
-import {
-  MALE_FIRST_NAMES,
-  FEMALE_FIRST_NAMES,
-  LAST_NAMES,
-} from "../data/BR/names";
+import type { CountryCode, Person } from "./types";
+import * as AR_NAMES from "../data/AR/names";
+import * as BR_NAMES from "../data/BR/names";
+import * as EE_NAMES from "../data/EE/names";
+import * as MX_NAMES from "../data/MX/names";
+import * as US_NAMES from "../data/US/names";
 import { DATE_FORMAT } from "./dates";
+
+const NAME_POOLS: Record<
+  CountryCode,
+  {
+    MALE_FIRST_NAMES: string[];
+    FEMALE_FIRST_NAMES: string[];
+    LAST_NAMES: string[];
+  }
+> = {
+  AR: AR_NAMES,
+  BR: BR_NAMES,
+  EE: EE_NAMES,
+  MX: MX_NAMES,
+  US: US_NAMES,
+};
 
 export function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -27,15 +42,19 @@ export function randomDriversLicenseNumber(): string {
   return String(Math.floor(Math.random() * 90000000000) + 10000000000);
 }
 
-export function randomPerson(): Person {
+export function randomPerson(country: CountryCode = "BR"): Person {
+  const names = NAME_POOLS[country];
   const gender = Math.random() < 0.5 ? "M" : "F";
+
   const firstName =
-    gender === "M" ? pick(MALE_FIRST_NAMES) : pick(FEMALE_FIRST_NAMES);
+    gender === "M"
+      ? pick(names.MALE_FIRST_NAMES)
+      : pick(names.FEMALE_FIRST_NAMES);
 
   return {
     idNumber: randomIdNumber(),
     firstName,
-    lastName: pick(LAST_NAMES),
+    lastName: pick(names.LAST_NAMES),
     gender,
     dateOfBirth: randomDateOfBirth(),
   };

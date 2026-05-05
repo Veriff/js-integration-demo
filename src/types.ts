@@ -6,11 +6,25 @@ export interface ImageSource {
   filePrefix?: string;
 }
 
-export interface GenerateOptions {
-  useCase?: string;
-  documentType?: DocumentType;
+export type CountryCode = "AR" | "BR" | "EE" | "MX" | "US";
+
+interface BaseGenerateOptions {
   imageSources?: ImageSource[];
 }
+
+interface GenerateFromRegistry extends BaseGenerateOptions {
+  useCase: string;
+  documentType?: never;
+  country?: never;
+}
+
+interface GenerateFromScratch extends BaseGenerateOptions {
+  useCase?: never;
+  documentType?: DocumentType;
+  country?: CountryCode;
+}
+
+export type GenerateOptions = GenerateFromRegistry | GenerateFromScratch;
 
 export interface Person {
   idNumber?: string;

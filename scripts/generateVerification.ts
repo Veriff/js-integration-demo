@@ -12,10 +12,18 @@ import {
   randomPerson,
 } from "../src/random";
 import { BIOMETRIC_EE } from "../src/constants";
-import type { ImageSource, GenerateOptions, DocumentType } from "../src/types";
+import type {
+  CountryCode,
+  ImageSource,
+  GenerateOptions,
+  DocumentType,
+} from "../src/types";
 
-function buildDefaultPayload(documentType: DocumentType): SessionPayload {
-  const person = randomPerson();
+function buildDefaultPayload(
+  documentType: DocumentType,
+  country: CountryCode = "EE",
+): SessionPayload {
+  const person = randomPerson(country);
 
   if (documentType === "PASSPORT") {
     const documentDates = randomDriversLicenseDates();
@@ -24,7 +32,7 @@ function buildDefaultPayload(documentType: DocumentType): SessionPayload {
       verification: {
         person,
         document: {
-          country: "BR",
+          country,
           type: "PASSPORT",
           number: randomPassportNumber(),
           category: "AB",
@@ -41,7 +49,7 @@ function buildDefaultPayload(documentType: DocumentType): SessionPayload {
       verification: {
         person,
         document: {
-          country: "BR",
+          country,
           type: "ID_CARD",
           number: randomIdCardNumber(),
           category: "AB",
@@ -58,7 +66,7 @@ function buildDefaultPayload(documentType: DocumentType): SessionPayload {
       verification: {
         person,
         document: {
-          country: "BR",
+          country,
           type: "DRIVERS_LICENSE",
           number: randomDriversLicenseNumber(),
           category: "AB",
@@ -131,7 +139,10 @@ export async function generateVerification(
 
   const payload: SessionPayload = USE_CASE
     ? structuredClone(SESSIONS[USE_CASE].payload)
-    : buildDefaultPayload(options?.documentType ?? "DRIVERS_LICENSE");
+    : buildDefaultPayload(
+        options?.documentType ?? "DRIVERS_LICENSE",
+        options?.country,
+      );
 
   if (options?.documentType) {
     payload.verification.document.type = options.documentType;
