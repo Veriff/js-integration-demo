@@ -26,6 +26,10 @@ function onCancel() {
 
 const backChoice = { title: "← Back", value: "back" };
 
+function clearLastPromptLine() {
+  process.stdout.write("\x1b[1A\x1b[2K");
+}
+
 async function generateFromScratch(): Promise<"back" | void> {
   const { documentType } = await prompts(
     {
@@ -39,6 +43,7 @@ async function generateFromScratch(): Promise<"back" | void> {
   );
 
   if (documentType === "back") {
+    clearLastPromptLine();
     return "back";
   }
 
@@ -71,6 +76,7 @@ async function generateFromRegistries(): Promise<"back" | void> {
   );
 
   if (country === "back") {
+    clearLastPromptLine();
     return "back";
   }
 
@@ -92,6 +98,8 @@ async function generateFromRegistries(): Promise<"back" | void> {
   );
 
   if (useCase === "back") {
+    clearLastPromptLine();
+    clearLastPromptLine();
     return generateFromRegistries();
   }
 
@@ -133,13 +141,19 @@ async function main(): Promise<void> {
 
   if (action === "registries") {
     const result = await generateFromRegistries();
-    if (result === "back") return main();
+    if (result === "back") {
+      clearLastPromptLine();
+      return main();
+    }
     return;
   }
 
   if (action === "generate") {
     const result = await generateFromScratch();
-    if (result === "back") return main();
+    if (result === "back") {
+      clearLastPromptLine();
+      return main();
+    }
     return;
   }
 
