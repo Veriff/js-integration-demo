@@ -36,7 +36,11 @@ async function generateFromScratch(): Promise<"back" | void> {
       type: "select",
       name: "documentType",
       message: "Select document type:",
-      choices: [backChoice, ...DOCUMENT_TYPES],
+      choices: [
+        backChoice,
+        ...DOCUMENT_TYPES,
+        { title: "Selfie only (no document)", value: "SELFIE_ONLY" },
+      ],
       initial: 1,
     },
     { onCancel },
@@ -47,13 +51,16 @@ async function generateFromScratch(): Promise<"back" | void> {
     return "back";
   }
 
-  const docSources = DOCUMENT_IMAGE_SOURCES[documentType] ?? [];
+  const selfieOnly = documentType === "SELFIE_ONLY";
+  const docSources = selfieOnly
+    ? []
+    : (DOCUMENT_IMAGE_SOURCES[documentType] ?? []);
   const imageSources = [{ dir: BIOMETRIC_EE, context: "face" }, ...docSources];
 
   console.log("\nStarting verification...\n");
 
   await generateVerification({
-    documentType,
+    documentType: selfieOnly ? undefined : documentType,
     imageSources,
   });
 }
