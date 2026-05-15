@@ -33,9 +33,8 @@ tmp/
 coverage/
 .nyc_output/
 
-# Sessions / Local
-prompt.md
-prompt/
+# Temporary files
+tmp/
 docs/
 
 # Misc
