@@ -6,12 +6,20 @@ import { readImageBase64, readImages } from "../src/images";
 import { BIOMETRIC_EE } from "../src/constants";
 import { SESSIONS, SessionPayload } from "../data/index";
 import {
+  pick,
   randomDriversLicenseDates,
   randomDriversLicenseNumber,
   randomIdCardNumber,
   randomPassportNumber,
   randomPerson,
+  randomGender,
 } from "../src/random";
+
+import * as AR_NAMES from "../data/AR/names";
+import * as BR_NAMES from "../data/BR/names";
+import * as EE_NAMES from "../data/EE/names";
+import * as MX_NAMES from "../data/MX/names";
+import * as US_NAMES from "../data/US/names";
 
 import type {
   CountryCode,
@@ -19,6 +27,11 @@ import type {
   GenerateOptions,
   DocumentType,
 } from "../src/types";
+
+const NAME_POOLS: Record<
+  CountryCode,
+  { MALE_FIRST_NAMES: string[]; FEMALE_FIRST_NAMES: string[]; LAST_NAMES: string[] }
+> = { AR: AR_NAMES, BR: BR_NAMES, EE: EE_NAMES, MX: MX_NAMES, US: US_NAMES };
 
 function buildDefaultPayload(
   documentType: DocumentType,
@@ -147,6 +160,15 @@ export async function generateVerification(
         options?.documentType ?? "DRIVERS_LICENSE",
         options?.country,
       );
+
+  if (USE_CASE && payload.verification.person.firstName) {
+    const country = (payload.verification.document.country ?? "BR") as CountryCode;
+    const names = NAME_POOLS[country];
+    const gender = payload.verification.person.gender ?? randomGender();
+    payload.verification.person.firstName =
+      gender === "M" ? pick(names.MALE_FIRST_NAMES) : pick(names.FEMALE_FIRST_NAMES);
+    payload.verification.person.lastName = pick(names.LAST_NAMES);
+  }
 
   if (options?.documentType) {
     payload.verification.document.type = options.documentType;
