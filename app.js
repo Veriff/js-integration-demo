@@ -1,8 +1,6 @@
 // Dependencies
 const fs = require("fs");
 const crypto = require("crypto");
-const fetch = require("node-fetch");
-const bodyParser = require("body-parser");
 
 // Globals
 const API_TOKEN = process.env.API_TOKEN;
@@ -105,7 +103,6 @@ async function upload(verificationId, file) {
       API_URL + "/sessions/" + verificationId + "/media",
       options
     );
-    const json = await response.json();
     return response;
   } catch (err) {
     console.log("upload method error", err);
@@ -192,7 +189,7 @@ function isSignatureValid(data) {
     payload = JSON.stringify(data.payload);
   }
   if (payload.constructor !== Buffer) {
-    payload = new Buffer.from(payload, "utf8");
+    payload = Buffer.from(payload, "utf8");
   }
   const hash = crypto.createHmac("sha256", secret);
   hash.update(payload);
@@ -204,8 +201,7 @@ function isSignatureValid(data) {
 if (WEBHOOK_PORT) {
   const express = require("express");
   const app = express();
-  app.use(bodyParser.json());
-  let server = require("http").Server(app);
+  app.use(express.json());
 
   app.post("/verification/", (req, res) => {
     const signature = req.get("x-hmac-signature");
@@ -213,6 +209,12 @@ if (WEBHOOK_PORT) {
     const payload = req.body;
 
     console.log("Received a webhook");
+    // Express 5 leaves req.body undefined when the JSON parser didn't run
+    if (!payload || !signature) {
+      console.log("Rejected webhook: missing JSON body or signature header");
+      res.status(400).json({ status: "error" });
+      return;
+    }
     console.log(
       "Validated signature:",
       isSignatureValid({ signature, secret, payload })
@@ -222,5 +224,11 @@ if (WEBHOOK_PORT) {
     process.exit();
   });
 
-  server.listen(WEBHOOK_PORT);
+  // Express 5 passes listen errors (e.g. EADDRINUSE) to the callback
+  app.listen(WEBHOOK_PORT, (error) => {
+    if (error) {
+      throw error;
+    }
+    console.log("Listening for webhooks on port", WEBHOOK_PORT);
+  });
 }
