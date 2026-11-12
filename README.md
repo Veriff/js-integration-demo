@@ -16,11 +16,14 @@ It currently does five things for you:
 5. Optionally, it also receives a decision notification webhook from Veriff of the final decision, which usually shouldn't take longer than few minutes.
 
 # Installation:  
+Requires Node.js 24 (see `.nvmrc`).  
 `npm install`  
 
 # Run:  
 Get 'Api key' and 'Api secret' (under Management -> Vendor) and respectively fill in API_TOKEN and API_SECRET environment variables.  
 
 `API_TOKEN={_API_TOKEN} API_SECRET={API_SECRET} node app.js`  
+
+Or put them in a `.env` file and run `node --env-file=.env app.js`.  
 
 Optionally, for receiving decision notifications for testing purposes, update 'Web hook url' (under Management -> Vendor -> Edit), and then include a WEBHOOK_PORT={PORT} argument that will boot up an Express.js webserver, and opens an endpoint that starts listening to the decision notification webhook for you (assuming your service has a public IP and domain and is open to the internet).  
