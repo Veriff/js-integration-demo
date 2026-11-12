@@ -27,7 +27,7 @@ Headless Veriff API integration that skips Veriff's frontend application. Two en
 
 ## Prerequisites
 
-- Node.js v24.15.0 (see `.nvmrc`)
+- Node.js v24.22.3 (see `.nvmrc`)
 
 ## Installation
 

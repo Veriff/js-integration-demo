@@ -28,7 +28,7 @@ npm run typecheck
 npm run build
 ```
 
-TypeScript project using `tsx` for direct execution. No test framework or linter. Node v24.15.0 (see .nvmrc).
+TypeScript project using `tsx` for direct execution. No test framework or linter. Node v24.22.3 (see .nvmrc).
 
 ## File Structure
 
